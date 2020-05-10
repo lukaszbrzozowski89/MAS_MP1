@@ -3,37 +3,76 @@
  * Łukasz Brzozowski (s17174) @ PJATK
  */
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Pilot extends Person {
 
-    public static int maxAgeToBeAPilot = 60; //atrybut klasowy, maksymalny wiek jaki moze miec pilot
-    public static long averageCountOfKilometersInPlane;
+    private static int maxAgeToBeAPilot = 60;
+    private static int minAgeToBeAPilot = 18;
+    private static long kmInPlaneToGetBoeingLicense = 20000;
+    private static long averageCountOfKilometersInPlane;
+    private static long kmInPlaneToGetAirbusLicense;
+
     private long countOfKilometersInPlane = 0;
     private int id;
-    private ArrayList<String> planeLicence = new ArrayList<>(); //atrybut powtarzalny, prosty, opcjonalny
+    private ArrayList<String> planeLicence = new ArrayList<>();
     private boolean isValidMedicalExam;
-    private Date dateOfMedicalExamsValidity;
-    private ArrayList<Object> licence = new ArrayList<>(); // atrybut powtarzalny, złożony
+    private LocalDate dateOfMedicalExamsValidity;
+    private ArrayList<Object> licence = new ArrayList<>();
+
     private static int pilotCount = 0;
     private boolean isActivePilot;
-    public int licenseNumber; // wymagany, złozony
+    public String licenseNumber;
 
 
-    public Pilot(String name, String surname, Date dateOfBirth, int licenseNumber, String planeLicence) throws Exception {
+    public Pilot(String name, String surname, LocalDate dateOfBirth, String licenseNumber,
+                 String planeLicence) throws Exception {
         super(name, surname, dateOfBirth);
-        if (licenseNumber == 0) {
+        if (getAge(dateOfBirth) < minAgeToBeAPilot) {
+            throw new Exception("You are too young to be a pilot");
+        }
+        if (licenseNumber == null || licenseNumber.isEmpty()) {
             throw new Exception("License is required to be a pilot!");
         }
         this.licenseNumber = licenseNumber;
-        if (planeLicence == null){
-            throw new Exception("Pilot without a licence for plane?");
-        }
         this.planeLicence.add(planeLicence);
         pilotCount++;
 
         this.id = pilotCount;
+    }
+
+    public static void setMaxAgeToBeAPilot(int maxAge) {
+        maxAgeToBeAPilot = maxAge;
+    }
+
+    public static void setMinAgeToBeAPilot(int minAge) {
+        minAgeToBeAPilot = minAge;
+    }
+
+    public static void changeKmInPlaneToGetBoeingLicense(long km) {
+        kmInPlaneToGetBoeingLicense = km;
+    }
+
+    public static void changeKmInPlaneToGetAirbusLicense(long km) {
+        kmInPlaneToGetAirbusLicense = km;
+    }
+
+    public static long getKmInPlaneToGetBoeingLicense() {
+        return kmInPlaneToGetBoeingLicense;
+    }
+
+
+    public static long getKmInPlaneToGetAirbusLicense() {
+        return kmInPlaneToGetAirbusLicense;
+    }
+
+    public int getNumberOfPlaneLicences(Pilot pilot){
+        return pilot.getPlaneLicence().size();
+    }
+
+    public int getNumberOfLicences(Pilot pilot){
+        return pilot.getLicence().size();
     }
 
     public long getCountOfKilometersInPlane() {
@@ -52,15 +91,15 @@ public class Pilot extends Person {
         return planeLicence;
     }
 
-    public boolean getIsValidMedicalExam(Date dateOfMedicalExamsValidity) {
-        return (System.currentTimeMillis() - dateOfMedicalExamsValidity.getTime()) < 0;
+    public boolean getIsValidMedicalExam(LocalDate dateOfMedicalExamsValidity) {
+        return (System.currentTimeMillis() - dateOfMedicalExamsValidity.toEpochDay()) < 0;
     }
 
-    public Date getDateOfMedicalExamsValidity() {
+    public LocalDate getDateOfMedicalExamsValidity() {
         return dateOfMedicalExamsValidity;
     }
 
-    public void setDateOfMedicalExamsValidity(Date dateOfMedicalExamsValidity) {
+    public void setDateOfMedicalExamsValidity(LocalDate dateOfMedicalExamsValidity) {
         this.dateOfMedicalExamsValidity = dateOfMedicalExamsValidity;
         if (getIsValidMedicalExam(dateOfMedicalExamsValidity)) {
             isValidMedicalExam = true;
@@ -73,8 +112,8 @@ public class Pilot extends Person {
         this.licence.add(typeOfLicence);
     }
 
-    public void addTypeOfLicence(int license) {
-        this.licence.add(license);
+    public void addTypeOfLicence(int typeOfLicence) {
+        this.licence.add(typeOfLicence);
     }
 
     public void removeTypeOfLicence(int typeOfLicence) {
@@ -86,10 +125,29 @@ public class Pilot extends Person {
         setAverageKmInPlane(this);
     }
 
+    public static void setPilotCount(int pilotCount) {
+        Pilot.pilotCount = pilotCount;
+    }
+
+    public static int getPilotCount() {
+        return pilotCount;
+    }
+
+    /**
+     * Class method which set average km in plane counted while adding new km in object Pilot
+     *
+     * @param pilot
+     */
     public static void setAverageKmInPlane(Pilot pilot) {
         averageCountOfKilometersInPlane += (pilot.countOfKilometersInPlane - averageCountOfKilometersInPlane) / pilotCount;
     }
 
+
+    /**
+     * Class method which returns average count of KM in plane of all object in that class.
+     *
+     * @return average kilometers of all objects
+     */
     public static long getAverageKmInPlane() {
         return averageCountOfKilometersInPlane;
     }
@@ -113,28 +171,18 @@ public class Pilot extends Person {
 
     /**
      * Method used to set pilot activity-
-     * When pilot:
+     * When:
      * 1. pilot reach retirement age (60th birthday): is not active temporarily!
      * 2. pilot doesn't have actual medical exams - is not active
      *
      * @param activePilot - parameter can set which pilot is active employee
      */
     public void setActivePilot(boolean activePilot) {
-        if (getAge() < maxAgeToBeAPilot && isValidMedicalExam)
+        if (getAge(this.getDateOfBirth()) < maxAgeToBeAPilot && isValidMedicalExam)
             isActivePilot = activePilot;
         else
             isActivePilot = false;
 
-    }
-
-    /**
-     * Override method from Person class.
-     *
-     * @return age of Pilot
-     */
-    @Override
-    public int getAge() {
-        return super.getAge();
     }
 
     /**
@@ -150,8 +198,9 @@ public class Pilot extends Person {
                 ", id=" + id +
                 ", licenseNumber=" + licenseNumber +
                 ", planeLicence=" + planeLicence +
+                "numberOfPlaneLicences=" + getNumberOfPlaneLicences(this) +
                 ", isValidMedicalExam=" + isValidMedicalExam +
-                ", dateOfMedicalExamsValidity=" + dateOfMedicalExamsValidity +
+                (dateOfMedicalExamsValidity != null ? ", dateOfMedicalExamsValidity=" + dateOfMedicalExamsValidity : "") +
                 ", licence=" + licence +
                 ", isActivePilot=" + isActivePilot +
                 '}';

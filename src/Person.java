@@ -4,19 +4,20 @@
  */
 
 
-import java.util.Date;
+import org.jetbrains.annotations.Nullable;
+
+import java.time.LocalDate;
+import java.util.Optional;
 
 
 public abstract class Person extends ObjectPlus {
-    private String name; //atrybut wymagany, prosty, obiektu
-    private String surname; //atrybut wymagany, prosty, obiektu
-    private String maidenName; // atrybut opcjonalny, obiektu, prosty
-    private Date dateOfBirth; // atrybut wymagany, złożony, obiektu,
-    private int age; //atrybut pochodny, wyliczalny na podstawie daty urodzenia oraz daty aktualnej.
+    private String name; //atrybut prosty, obiektu
+    private String surname; //atrybut prosty, obiektu
+    private String familyName; // atrybut prosty, opcjonalny, obiektu,
+    private LocalDate dateOfBirth; // atrybut złożony, obiektu,
 
-    protected static final long YEAR_IN_MILLIS = 31556952000L; //atrybut klasowy, przechowujaca wartosc 1 roku w millis
 
-    public Person(String name, String surname, Date dateOfBirth) {
+    public Person(String name, String surname, LocalDate dateOfBirth) {
         if (name == null) {
             throw new NullPointerException("Name is required field");
         } else {
@@ -27,12 +28,12 @@ public abstract class Person extends ObjectPlus {
         } else {
             this.surname = surname;
         }
+
         if (dateOfBirth == null) {
             throw new NullPointerException("Date of birth is required field");
         } else {
             this.dateOfBirth = dateOfBirth;
         }
-        setAge();
     }
 
     public String getName() {
@@ -43,34 +44,33 @@ public abstract class Person extends ObjectPlus {
         return surname;
     }
 
-    public String getMaidenName() {
-        return maidenName;
+    public String getFamilyName() {
+        return familyName;
     }
 
-    public void setMaidenName(String maidenName) {
-        this.maidenName = maidenName;
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public int getAge() {
-        return (int) (((System.currentTimeMillis() - this.dateOfBirth.getTime()) / YEAR_IN_MILLIS));
+
+    public int getAge(LocalDate dateOfBirth) {
+        return LocalDate.now().getYear() - dateOfBirth.getYear();
     }
 
-    public void setAge() {
-        this.age = (int) ((System.currentTimeMillis() - this.dateOfBirth.getTime()) / YEAR_IN_MILLIS);
-    }
+
 
     @Override
     public String toString() {
         return "Person{" +
                 "name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                (maidenName != null ? ", maidenName='" + maidenName + '\'' : "") +
-                ", dateOfBirth=" + dateOfBirth.toInstant() +
-                ", age=" + age +
+               ", familyName='" + (getFamilyName() != null ?  getFamilyName() : "(no family name)") + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
                 '}';
     }
 }
+

@@ -12,7 +12,7 @@ import java.util.Hashtable;
 
 public class ObjectPlus implements Serializable {
 
-    private static final long serialVersionUID = 11112L; // User ID required do serializable
+    private static final long serialVersionUID = 11112L;
 
     private static Hashtable<Class<? extends ObjectPlus>, ArrayList<ObjectPlus>> extent = new Hashtable<>();
 
@@ -37,6 +37,15 @@ public class ObjectPlus implements Serializable {
         extent = (Hashtable<Class<? extends ObjectPlus>, ArrayList<ObjectPlus>>) ois.readObject();
     }
 
+    public static int extentSize(Class<? extends ObjectPlus> className){
+        int counter = 0;
+        if (extent.containsKey(className)){
+          counter = extent.get(className).size();
+        }
+        System.out.println(" Extent " + className.getSimpleName() + " : " + counter);
+        return counter;
+    }
+
     public static void showExtent(Class<? extends ObjectPlus> className) throws Exception {
         ArrayList<ObjectPlus> extentList;
 
@@ -51,5 +60,17 @@ public class ObjectPlus implements Serializable {
         for (Object obj : extentList) {
             System.out.println(obj + "\n");
         }
+    }
+
+    public static ArrayList<ObjectPlus> getExtent(Class<? extends ObjectPlus> className) throws Exception {
+        ArrayList<ObjectPlus> extentList;
+
+        if (extent.containsKey(className)) {
+            extentList = extent.get(className);
+        } else {
+            throw new Exception("Unknown class " + className);
+        }
+        System.out.println(extentList);
+        return extentList;
     }
 }
