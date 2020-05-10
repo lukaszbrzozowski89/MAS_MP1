@@ -3,18 +3,14 @@
  * Łukasz Brzozowski (s17174) @ PJATK
  */
 
-
-import org.jetbrains.annotations.Nullable;
-
 import java.time.LocalDate;
-import java.util.Optional;
 
 
 public abstract class Person extends ObjectPlus {
-    private String name; //atrybut prosty, obiektu
-    private String surname; //atrybut prosty, obiektu
-    private String familyName; // atrybut prosty, opcjonalny, obiektu,
-    private LocalDate dateOfBirth; // atrybut złożony, obiektu,
+    private String name;
+    private String surname;
+    private String familyName;
+    private LocalDate dateOfBirth;
 
 
     public Person(String name, String surname, LocalDate dateOfBirth) {

@@ -10,9 +10,9 @@ public class Pilot extends Person {
 
     private static int maxAgeToBeAPilot = 60;
     private static int minAgeToBeAPilot = 18;
-    private static long kmInPlaneToGetBoeingLicense = 20000;
+    private static long kmInPlaneToGetBoeingLicense = 7000;
     private static long averageCountOfKilometersInPlane;
-    private static long kmInPlaneToGetAirbusLicense;
+    private static long kmInPlaneToGetAirbusLicense = 8500;
 
     private long countOfKilometersInPlane = 0;
     private int id;
@@ -62,7 +62,6 @@ public class Pilot extends Person {
         return kmInPlaneToGetBoeingLicense;
     }
 
-
     public static long getKmInPlaneToGetAirbusLicense() {
         return kmInPlaneToGetAirbusLicense;
     }
@@ -73,6 +72,14 @@ public class Pilot extends Person {
 
     public int getNumberOfLicences(Pilot pilot){
         return pilot.getLicence().size();
+    }
+
+    public static void setPilotCount(int pilotCount) {
+        Pilot.pilotCount = pilotCount;
+    }
+
+    public static int getPilotCount() {
+        return pilotCount;
     }
 
     public long getCountOfKilometersInPlane() {
@@ -123,14 +130,6 @@ public class Pilot extends Person {
     public void addKilometersInPlane(long km) {
         this.countOfKilometersInPlane += km;
         setAverageKmInPlane(this);
-    }
-
-    public static void setPilotCount(int pilotCount) {
-        Pilot.pilotCount = pilotCount;
-    }
-
-    public static int getPilotCount() {
-        return pilotCount;
     }
 
     /**

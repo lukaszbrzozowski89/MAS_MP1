@@ -55,7 +55,7 @@ public class Main {
 
             Pilot p = new Pilot("Pilot nr: " + i,
                     "Atomek",
-                    LocalDate.now().minusYears(i * 6*2),
+                    LocalDate.now().minusYears(i * 6 * 2),
                     String.valueOf(i * i * i),
                     "Embraer");
             if ((i % 2) == 0) {
